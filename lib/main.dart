@@ -64,7 +64,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   //variable
   TextEditingController langueIdentifier = TextEditingController();
-  LanguageIdentifier identifier = LanguageIdentifier(confidenceThreshold: 0.5);
+  LanguageIdentifier identifier = LanguageIdentifier(confidenceThreshold: 0.1);
   String langueUnique = "";
 
 
@@ -76,6 +76,21 @@ class _MyHomePageState extends State<MyHomePage> {
         langueUnique = phrase;
       });
 
+    }
+
+  }
+
+  identifierMultipleLangue() async {
+    langueUnique = "";
+    if(langueIdentifier != null && langueIdentifier.text != ""){
+      List langs = await identifier.identifyPossibleLanguages(langueIdentifier.text);
+       for(IdentifiedLanguage lang in langs){
+         print(lang.languageTag);
+         setState(() {
+           langueUnique += "la langue est ${lang.languageTag} avec une confiance de ${(lang.confidence *100).toInt()} %\n";
+         });
+
+       }
     }
 
   }
@@ -105,6 +120,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ElevatedButton(
             onPressed: identifierLangue,
                 child: Text("Determiner la langue")),
+
+            ElevatedButton(
+                onPressed: identifierMultipleLangue,
+                child: Text("plusieurs langues")),
 
             Text(langueUnique)
 
