@@ -3,7 +3,9 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
+import 'package:untitled/paiement_helper.dart';
 import 'package:untitled/permissionHand.dart';
 import 'firebase_options.dart';
 
@@ -13,6 +15,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   MyPermissionPhoto().init();
+  Stripe.publishableKey = "pk_test_51GQ8hTDVXOXIy9UxpbYscBnuiq9FTW63gCk5agdRp2JOjym1NvC03WVaEBdj6wwFkJzAeCit9ZA77sBTeQHaI9rI00fsdMSCog";
   runApp(const MyApp());
 }
 
@@ -186,7 +189,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
               (bytesImages == null)?Container():Image.memory(bytesImages!),
 
-              Text(labels)
+              Text(labels),
+
+              ElevatedButton(onPressed: (){
+                MyPaymentHelper().makePayment(amount: '24', currency: 'eur');
+
+              }, child: Text("Paiement"))
 
             ],
           ),

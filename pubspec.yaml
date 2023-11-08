@@ -39,6 +39,9 @@ dependencies:
   google_ml_kit: ^0.16.3
   file_picker: ^6.1.1
   permission_handler: ^11.0.1
+  get:
+  http:
+  flutter_stripe: ^9.5.0+1
 
 dev_dependencies:
   flutter_test:

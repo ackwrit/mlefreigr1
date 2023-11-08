@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <!--  ajouter cette ligne android:enableOnBackInvokedCallback="true". -->
     <application
+        android:enableOnBackInvokedCallback="true"
         android:label="untitled"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
