@@ -1,6 +1,10 @@
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
+import 'package:untitled/permissionHand.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -8,6 +12,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  MyPermissionPhoto().init();
   runApp(const MyApp());
 }
 
@@ -47,8 +52,7 @@ class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
+  // that it has a State object (defined below) that contains fields that// how it looks.
 
   // This class is the configuration for the state. It holds the values (in this
   // case the title) provided by the parent (in this case the App widget) and
@@ -66,7 +70,11 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController langueIdentifier = TextEditingController();
   LanguageIdentifier identifier = LanguageIdentifier(confidenceThreshold: 0.1);
   String langueUnique = "";
-
+  OnDeviceTranslator translator = OnDeviceTranslator(sourceLanguage: TranslateLanguage.french, targetLanguage: TranslateLanguage.bengali);
+  Uint8List? bytesImages;
+  String? pathImage;
+  String labels= "";
+  ImageLabeler imageLabeler = ImageLabeler(options: ImageLabelerOptions(confidenceThreshold: 0.2));
 
   //méthode
   identifierLangue() async {
@@ -95,6 +103,46 @@ class _MyHomePageState extends State<MyHomePage> {
 
   }
 
+  translate() async{
+    if(langueIdentifier != null && langueIdentifier.text != ""){
+
+      String phrase = await translator.translateText(langueIdentifier.text);
+      setState(() {
+        langueUnique = phrase;
+      });
+    }
+  }
+
+  ImagePick() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      withData: true,
+      type: FileType.image,
+    );
+    if(result != null){
+      setState(() {
+        pathImage =result.files.first.path;
+        bytesImages = result.files.first.bytes;
+        processing(pathImage!);
+      });
+
+
+    }
+  }
+  processing(String image) async {
+    labels = "";
+    InputImage img = InputImage.fromFilePath(image);
+    List<ImageLabel> allElementImage = await imageLabeler.processImage(img);
+    for (ImageLabel label in allElementImage){
+
+        labels += "${label.label} avec une confiance de ${(label.confidence *100).toInt()} %\n";
+
+
+    }
+    setState(() {
+
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -112,22 +160,36 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: Column(
-          children:[
-            TextField(
-              controller: langueIdentifier,
-            ),
-            ElevatedButton(
-            onPressed: identifierLangue,
-                child: Text("Determiner la langue")),
+        child: SingleChildScrollView(
+          child: Column(
+            children:[
+              TextField(
+                controller: langueIdentifier,
+              ),
+              ElevatedButton(
+              onPressed: identifierLangue,
+                  child: Text("Determiner la langue")),
 
-            ElevatedButton(
-                onPressed: identifierMultipleLangue,
-                child: Text("plusieurs langues")),
+              ElevatedButton(
+                  onPressed: identifierMultipleLangue,
+                  child: Text("plusieurs langues")),
 
-            Text(langueUnique)
+              ElevatedButton(
+                  onPressed: translate,
+                  child: Text("Traduction")),
 
-          ],
+              Text(langueUnique),
+
+              ElevatedButton(
+                  onPressed: ImagePick,
+                  child: Text("Image")),
+
+              (bytesImages == null)?Container():Image.memory(bytesImages!),
+
+              Text(labels)
+
+            ],
+          ),
         ),
       ),
       // This trailing comma makes auto-formatting nicer for build methods.
