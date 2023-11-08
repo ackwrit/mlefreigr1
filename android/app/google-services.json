@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1013973377953",
+    "project_id": "mllearning-6520a",
+    "storage_bucket": "mllearning-6520a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1013973377953:android:52d5770909dd891a9c61e0",
+        "android_client_info": {
+          "package_name": "com.example.untitled"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfr96r7QAxy5Wymf04bJKZzm3cSCp7aOY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
